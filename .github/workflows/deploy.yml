@@ -3,19 +3,19 @@ name: Deploy Portfolio
 on:
   push:
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      mode:
-        description: Refresh mode
-        required: true
-        default: trends_only
-        type: choice
-        options:
-          - trends_only
-          - full_refresh
-  schedule:
-    - cron: "17 5 2-31 * *"
-    - cron: "23 6 1 1,3,5,7,9,11 *"
+  # workflow_dispatch:
+  #   inputs:
+  #     mode:
+  #       description: Refresh mode
+  #       required: true
+  #       default: trends_only
+  #       type: choice
+  #       options:
+  #         - trends_only
+  #         - full_refresh
+  # schedule:
+  #   - cron: "17 5 2-31 * *"
+  #   - cron: "23 6 1 1,3,5,7,9,11 *"
 
 permissions:
   contents: read
@@ -27,89 +27,87 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  refresh:
-    if: ${{ github.event_name != 'push' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    outputs:
-      changed: ${{ steps.refresh.outputs.changed }}
-      mode: ${{ steps.refresh.outputs.mode }}
-      model_previous: ${{ steps.refresh.outputs.model_previous }}
-      model_selected: ${{ steps.refresh.outputs.model_selected }}
-      model_changed: ${{ steps.refresh.outputs.model_changed }}
-      model_price_input: ${{ steps.refresh.outputs.model_price_input }}
-      model_price_output: ${{ steps.refresh.outputs.model_price_output }}
-      trends_updated_count: ${{ steps.refresh.outputs.trends_updated_count }}
-      sources_count: ${{ steps.refresh.outputs.sources_count }}
-      signal_openrouter: ${{ steps.refresh.outputs.signal_openrouter }}
-      signal_hf: ${{ steps.refresh.outputs.signal_hf }}
-      signal_arena: ${{ steps.refresh.outputs.signal_arena }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install --no-package-lock
-      - id: refresh
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-          OPENROUTER_HTTP_REFERER: ${{ vars.OPENROUTER_HTTP_REFERER }}
-        run: |
-          mode="trends_only"
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            mode="${{ inputs.mode }}"
-          elif [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "23 6 1 1,3,5,7,9,11 *" ]; then
-            mode="full_refresh"
-          fi
-          echo "Running mode: $mode"
-          node scripts/update-trends.mjs --mode="$mode"
-      - if: ${{ steps.refresh.outputs.changed == 'true' }}
-        env:
-          MODE: ${{ steps.refresh.outputs.mode }}
-          MODEL_PREVIOUS: ${{ steps.refresh.outputs.model_previous }}
-          MODEL_SELECTED: ${{ steps.refresh.outputs.model_selected }}
-          MODEL_CHANGED: ${{ steps.refresh.outputs.model_changed }}
-          MODEL_PRICE_INPUT: ${{ steps.refresh.outputs.model_price_input }}
-          MODEL_PRICE_OUTPUT: ${{ steps.refresh.outputs.model_price_output }}
-          TRENDS_UPDATED_COUNT: ${{ steps.refresh.outputs.trends_updated_count }}
-          SOURCES_COUNT: ${{ steps.refresh.outputs.sources_count }}
-          SIGNAL_OPENROUTER: ${{ steps.refresh.outputs.signal_openrouter }}
-          SIGNAL_HF: ${{ steps.refresh.outputs.signal_hf }}
-          SIGNAL_ARENA: ${{ steps.refresh.outputs.signal_arena }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/content.json
-          if git diff --cached --quiet; then
-            echo "No staged changes to commit"
-            exit 0
-          fi
-
-          stamp=$(date -u +%F)
-          cadence="daily"
-          if [ "$MODE" = "full_refresh" ]; then
-            cadence="bi-monthly"
-          fi
-
-          git commit \
-            -m "chore(trends): ${cadence} refresh ${stamp} [skip ci]" \
-            -m "mode: $MODE" \
-            -m "model.previous: $MODEL_PREVIOUS" \
-            -m "model.selected: $MODEL_SELECTED" \
-            -m "model.changed: $MODEL_CHANGED" \
-            -m "model.pricing.input: $MODEL_PRICE_INPUT" \
-            -m "model.pricing.output: $MODEL_PRICE_OUTPUT" \
-            -m "signals.openrouter_rankings_top: $SIGNAL_OPENROUTER" \
-            -m "signals.hf_trending_top: $SIGNAL_HF" \
-            -m "signals.arena_top: $SIGNAL_ARENA" \
-            -m "trends.updated_count: $TRENDS_UPDATED_COUNT" \
-            -m "sources.count: $SOURCES_COUNT"
-          git push
+  # refresh:
+  #   if: ${{ github.event_name != 'push' }}
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write
+  #   outputs:
+  #     changed: ${{ steps.refresh.outputs.changed }}
+  #     mode: ${{ steps.refresh.outputs.mode }}
+  #     model_previous: ${{ steps.refresh.outputs.model_previous }}
+  #     model_selected: ${{ steps.refresh.outputs.model_selected }}
+  #     model_changed: ${{ steps.refresh.outputs.model_changed }}
+  #     model_price_input: ${{ steps.refresh.outputs.model_price_input }}
+  #     model_price_output: ${{ steps.refresh.outputs.model_price_output }}
+  #     trends_updated_count: ${{ steps.refresh.outputs.trends_updated_count }}
+  #     sources_count: ${{ steps.refresh.outputs.sources_count }}
+  #     signal_openrouter: ${{ steps.refresh.outputs.signal_openrouter }}
+  #     signal_hf: ${{ steps.refresh.outputs.signal_hf }}
+  #     signal_arena: ${{ steps.refresh.outputs.signal_arena }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #     - run: npm install --no-package-lock
+  #     - id: refresh
+  #       env:
+  #         OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+  #         OPENROUTER_HTTP_REFERER: ${{ vars.OPENROUTER_HTTP_REFERER }}
+  #       run: |
+  #         mode="trends_only"
+  #         if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+  #           mode="${{ inputs.mode }}"
+  #         elif [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "23 6 1 1,3,5,7,9,11 *" ]; then
+  #           mode="full_refresh"
+  #         fi
+  #         echo "Running mode: $mode"
+  #         node scripts/update-trends.mjs --mode="$mode"
+  #     - if: ${{ steps.refresh.outputs.changed == 'true' }}
+  #       env:
+  #         MODE: ${{ steps.refresh.outputs.mode }}
+  #         MODEL_PREVIOUS: ${{ steps.refresh.outputs.model_previous }}
+  #         MODEL_SELECTED: ${{ steps.refresh.outputs.model_selected }}
+  #         MODEL_CHANGED: ${{ steps.refresh.outputs.model_changed }}
+  #         MODEL_PRICE_INPUT: ${{ steps.refresh.outputs.model_price_input }}
+  #         MODEL_PRICE_OUTPUT: ${{ steps.refresh.outputs.model_price_output }}
+  #         TRENDS_UPDATED_COUNT: ${{ steps.refresh.outputs.trends_updated_count }}
+  #         SOURCES_COUNT: ${{ steps.refresh.outputs.sources_count }}
+  #         SIGNAL_OPENROUTER: ${{ steps.refresh.outputs.signal_openrouter }}
+  #         SIGNAL_HF: ${{ steps.refresh.outputs.signal_hf }}
+  #         SIGNAL_ARENA: ${{ steps.refresh.outputs.signal_arena }}
+  #       run: |
+  #         git config user.name "github-actions[bot]"
+  #         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+  #         git add src/data/content.json
+  #         if git diff --cached --quiet; then
+  #           echo "No staged changes to commit"
+  #           exit 0
+  #         fi
+  #
+  #         stamp=$(date -u +%F)
+  #         cadence="daily"
+  #         if [ "$MODE" = "full_refresh" ]; then
+  #           cadence="bi-monthly"
+  #         fi
+  #
+  #         git commit \
+  #           -m "chore(trends): ${cadence} refresh ${stamp} [skip ci]" \
+  #           -m "mode: $MODE" \
+  #           -m "model.previous: $MODEL_PREVIOUS" \
+  #           -m "model.selected: $MODEL_SELECTED" \
+  #           -m "model.changed: $MODEL_CHANGED" \
+  #           -m "model.pricing.input: $MODEL_PRICE_INPUT" \
+  #           -m "model.pricing.output: $MODEL_PRICE_OUTPUT" \
+  #           -m "signals.openrouter_rankings_top: $SIGNAL_OPENROUTER" \
+  #           -m "signals.hf_trending_top: $SIGNAL_HF" \
+  #           -m "signals.arena_top: $SIGNAL_ARENA" \
+  #           -m "trends.updated_count: $TRENDS_UPDATED_COUNT" \
+  #           -m "sources.count: $SOURCES_COUNT"
+  #         git push
 
   build:
-    needs: [refresh]
-    if: ${{ github.event_name == 'push' || needs.refresh.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
