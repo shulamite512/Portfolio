@@ -1,0 +1,533 @@
+---
+import "../styles/global.css";
+import content from "../data/content.json";
+
+type IconToken = {
+  name: string;
+  color: string;
+};
+
+const { site, nav, hero, highlights, trends, skills, projects, contact, footer } = content;
+const formEndpoint = (import.meta.env.PUBLIC_FORMSPREE_ENDPOINT ?? "").trim();
+const formEnabled = formEndpoint.length > 0;
+
+const toHash = (id: string) => `#${id}`;
+const projectId = (slug: string) => `project-${slug}`;
+const isExternal = (url: string) => url.startsWith("http://") || url.startsWith("https://");
+
+const iconTokens = {
+  hero: { name: "mdi:rocket-launch-outline", color: "icon-color-cosmos" },
+  highlights: { name: "mdi:trophy-award", color: "icon-color-sunrise" },
+  skills: { name: "mdi:brain", color: "icon-color-orchid" },
+  trends: { name: "mdi:trending-up", color: "icon-color-ocean" },
+  projects: { name: "mdi:briefcase-variant-outline", color: "icon-color-ocean" },
+  contact: { name: "mdi:email-fast-outline", color: "icon-color-rose" },
+  detail: { name: "mdi:sparkles", color: "icon-color-violet" },
+  location: { name: "mdi:map-marker-radius-outline", color: "icon-color-coral" },
+  link: { name: "mdi:link-variant", color: "icon-color-sky" },
+  send: { name: "mdi:send-circle-outline", color: "icon-color-mint" },
+  research: { name: "mdi:file-document-multiple-outline", color: "icon-color-gold" },
+  education: { name: "mdi:school-outline", color: "icon-color-leaf" },
+  personal: { name: "mdi:palette-outline", color: "icon-color-rainbow" },
+  engineering: { name: "mdi:cog-outline", color: "icon-color-steel" },
+  defaultSkill: { name: "mdi:star-four-points-circle-outline", color: "icon-color-violet" }
+} as const satisfies Record<string, IconToken>;
+
+const sectionIconMap: Record<string, IconToken> = {
+  hero: iconTokens.hero,
+  highlights: iconTokens.highlights,
+  trends: iconTokens.trends,
+  skills: iconTokens.skills,
+  projects: iconTokens.projects,
+  contact: iconTokens.contact
+};
+
+const highlightTagIconMap: Record<string, IconToken> = {
+  Research: iconTokens.research,
+  Engineering: iconTokens.engineering,
+  Education: iconTokens.education,
+  Personal: iconTokens.personal
+};
+
+const socialIconMap: Record<string, IconToken> = {
+  LinkedIn: { name: "logos:linkedin-icon", color: "icon-color-ocean" },
+  GitHub: { name: "logos:github-icon", color: "icon-color-steel" }
+};
+
+const projectIconMap: Record<string, IconToken> = {
+  "kayak-simulation": { name: "mdi:kayaking", color: "icon-color-sky" },
+  "trauma-detection": { name: "mdi:hospital-box-outline", color: "icon-color-mint" },
+  "hate-speech-detection": { name: "mdi:shield-check-outline", color: "icon-color-rose" }
+};
+
+const skillGroupIconMap: Record<string, IconToken> = {
+  "AI and ML": { name: "mdi:robot-happy-outline", color: "icon-color-orchid" },
+  "Agentic Systems": { name: "mdi:transit-connection-variant", color: "icon-color-violet" },
+  "Software and Data": { name: "mdi:code-braces", color: "icon-color-steel" },
+  "Cloud and Platform Engineering": { name: "mdi:cloud-sync-outline", color: "icon-color-sky" },
+  "Data Engineering": { name: "mdi:database-cog-outline", color: "icon-color-gold" },
+  "LLMs and GenAI": { name: "mdi:creation-outline", color: "icon-color-cosmos" },
+  "Databases and Streaming": { name: "mdi:database-arrow-right-outline", color: "icon-color-ocean" },
+  "Mathematical Foundations": { name: "mdi:sigma", color: "icon-color-leaf" },
+  "Creative and Collaborative Skills": { name: "mdi:theater", color: "icon-color-rainbow" }
+};
+
+const skillIconRules: Array<[string[], IconToken]> = [
+  [["python"], { name: "logos:python", color: "icon-color-leaf" }],
+  [["typescript"], { name: "logos:typescript-icon", color: "icon-color-sky" }],
+  [["api"], { name: "mdi:api", color: "icon-color-ocean" }],
+  [["postgresql"], { name: "logos:postgresql", color: "icon-color-steel" }],
+  [["mysql"], { name: "logos:mysql", color: "icon-color-steel" }],
+  [["sql"], { name: "mdi:database-search-outline", color: "icon-color-steel" }],
+  [["docker"], { name: "logos:docker-icon", color: "icon-color-sky" }],
+  [["pytorch"], { name: "logos:pytorch-icon", color: "icon-color-coral" }],
+  [["scikit"], { name: "simple-icons:scikitlearn", color: "icon-color-violet" }],
+  [["nlp"], { name: "mdi:text-box-search-outline", color: "icon-color-orchid" }],
+  [["model evaluation"], { name: "mdi:chart-line-variant", color: "icon-color-mint" }],
+  [["feature engineering"], { name: "mdi:tune-variant", color: "icon-color-gold" }],
+  [["langchain"], { name: "mdi:link-variant-plus", color: "icon-color-violet" }],
+  [["workflow"], { name: "mdi:workflow", color: "icon-color-sky" }],
+  [["prompt"], { name: "mdi:draw-pen", color: "icon-color-rose" }],
+  [["rag"], { name: "mdi:book-open-page-variant-outline", color: "icon-color-cosmos" }],
+  [["aws"], { name: "logos:aws", color: "icon-color-sky" }],
+  [["azure"], { name: "logos:microsoft-azure", color: "icon-color-sky" }],
+  [["cloud"], { name: "mdi:cloud-outline", color: "icon-color-sky" }],
+  [["infrastructure", "monitoring"], { name: "mdi:server-network", color: "icon-color-ocean" }],
+  [["etl", "batch", "orchestration"], { name: "mdi:cog-transfer-outline", color: "icon-color-gold" }],
+  [["data modeling", "data quality"], { name: "mdi:table-large", color: "icon-color-steel" }],
+  [["llm", "genai", "agent"], { name: "mdi:robot-outline", color: "icon-color-cosmos" }],
+  [["safety", "guardrails"], { name: "mdi:shield-star-outline", color: "icon-color-rose" }],
+  [["vector"], { name: "mdi:vector-intersection", color: "icon-color-violet" }],
+  [["kafka"], { name: "simple-icons:apachekafka", color: "icon-color-ocean" }],
+  [["event"], { name: "mdi:access-point-network", color: "icon-color-ocean" }],
+  [["linear algebra"], { name: "mdi:matrix", color: "icon-color-leaf" }],
+  [["probability", "statistics"], { name: "mdi:dice-multiple-outline", color: "icon-color-mint" }],
+  [["optimization"], { name: "mdi:bullseye-arrow", color: "icon-color-gold" }],
+  [["hypothesis"], { name: "mdi:flask-outline", color: "icon-color-coral" }],
+  [["singing"], { name: "mdi:microphone-variant", color: "icon-color-rainbow" }],
+  [["dancing"], { name: "mdi:dance-ballroom", color: "icon-color-rainbow" }],
+  [["painting"], { name: "mdi:palette", color: "icon-color-rainbow" }],
+  [["communication"], { name: "mdi:message-badge-outline", color: "icon-color-sunrise" }],
+  [["storytelling"], { name: "mdi:book-open-variant", color: "icon-color-orchid" }]
+];
+
+const sectionIconFor = (target: string): IconToken => sectionIconMap[target] ?? iconTokens.hero;
+const highlightIconFor = (tag: string): IconToken => highlightTagIconMap[tag] ?? iconTokens.highlights;
+const socialIconFor = (name: string): IconToken => socialIconMap[name] ?? iconTokens.link;
+const projectIconFor = (slug: string): IconToken => projectIconMap[slug] ?? iconTokens.projects;
+const groupIconFor = (name: string): IconToken => skillGroupIconMap[name] ?? iconTokens.defaultSkill;
+
+const skillIconFor = (name: string): IconToken => {
+  const normalized = name.toLowerCase();
+  for (const [keywords, icon] of skillIconRules) {
+    if (keywords.some((keyword) => normalized.includes(keyword))) {
+      return icon;
+    }
+  }
+  return iconTokens.defaultSkill;
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{site.title}</title>
+    <meta name="description" content={site.description} />
+    <script is:inline>
+      (() => {
+        const savedTheme = localStorage.getItem("theme");
+        const theme = savedTheme ?? "light";
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+    <script type="module" src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  </head>
+  <body>
+    <header class="site-header sticky top-0 z-20 border-b border-slate-200/80 bg-slate-50/90 backdrop-blur">
+      <nav class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+        <a href={toHash(hero.id)} class="nav-brand flex items-center gap-2 text-sm font-semibold tracking-wide text-slate-900">
+          <span class={`icon-chip ${iconTokens.hero.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.hero.name}></iconify-icon></span>
+          {site.name}
+        </a>
+        <div class="flex items-center gap-3">
+          <ul class="flex flex-wrap items-center gap-4 text-sm text-slate-600">
+            {nav.map((item) => {
+              const token = sectionIconFor(item.target);
+              return (
+                <li>
+                  <a href={toHash(item.target)} class="nav-link inline-flex items-center gap-1.5 transition hover:text-slate-900">
+                    <span class={`icon-mini ${token.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={token.name}></iconify-icon></span>
+                    {item.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+          <button type="button" class="theme-toggle" data-theme-toggle role="switch" aria-checked="false" aria-label="Switch to dark theme">
+            <span class="icon-mini icon-color-gold theme-sun" aria-hidden="true"><iconify-icon class="rich-icon" icon="mdi:white-balance-sunny"></iconify-icon></span>
+            <span class="icon-mini icon-color-cosmos theme-moon" aria-hidden="true"><iconify-icon class="rich-icon" icon="mdi:weather-night"></iconify-icon></span>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section id={hero.id} class="section" data-reveal>
+        <p class="badge">{hero.kicker}</p>
+        <h1 class="headline mt-6 text-3xl font-bold tracking-tight text-slate-900 md:text-5xl">{hero.headline}</h1>
+        <p class="section-copy">{hero.description}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={toHash(hero.primaryCta.target)} class="button-primary rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+            <span class={`icon-mini ${iconTokens.projects.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.projects.name}></iconify-icon></span>
+            {hero.primaryCta.label}
+          </a>
+          <a href={toHash(hero.secondaryCta.target)} class="button-secondary rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+            <span class={`icon-mini ${iconTokens.contact.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.contact.name}></iconify-icon></span>
+            {hero.secondaryCta.label}
+          </a>
+        </div>
+      </section>
+
+      <section id={highlights.id} class="section" data-reveal>
+        <h2 class="section-title flex items-center gap-3">
+          <span class={`icon-chip ${iconTokens.highlights.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.highlights.name}></iconify-icon></span>
+          {highlights.title}
+        </h2>
+        <p class="section-copy">{highlights.description}</p>
+        <div class="mt-8 grid gap-4 md:grid-cols-2">
+          {highlights.items.map((item, index) => {
+            const token = highlightIconFor(item.tag);
+            return (
+              <article class="card skill-card" data-reveal style={`--delay:${index * 80}ms`}>
+                <div class="mb-3 flex items-center justify-between gap-3">
+                  <h3 class="text-lg font-semibold text-slate-900">{item.title}</h3>
+                  <span class="badge highlight-tag" role="status" aria-label={`Category ${item.tag}`}>
+                    <span class={`icon-mini ${token.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={token.name}></iconify-icon></span>
+                    {item.tag}
+                  </span>
+                </div>
+                <p class="text-sm text-slate-700">{item.detail}</p>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id={trends.id} class="section" data-reveal>
+        <h2 class="section-title flex items-center gap-3">
+          <span class={`icon-chip ${iconTokens.trends.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.trends.name}></iconify-icon></span>
+          {trends.title}
+        </h2>
+        <p class="section-copy">{trends.description}</p>
+        <div class="trend-carousel mt-8" data-trend-carousel>
+          <div class="trend-slides">
+            {trends.items.map((item, index) => (
+              <article class={`trend-slide ${index === 0 ? "is-active" : ""}`} data-trend-slide>
+                <img src={item.image} alt={item.title} class="trend-image" loading={index === 0 ? "eager" : "lazy"} />
+                <div class="trend-overlay">
+                  <p class="trend-meta">{item.source} · {item.date}</p>
+                  <h3 class="trend-title">{item.title}</h3>
+                  <p class="trend-summary">{item.summary}</p>
+                  <a href={item.url} target="_blank" rel="noreferrer" class="trend-link">
+                    <span class={`icon-mini ${iconTokens.link.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.link.name}></iconify-icon></span>
+                    Read Source
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+          <button type="button" class="trend-control trend-prev" data-trend-prev aria-label="Previous trend">
+            <span class={`icon-mini ${iconTokens.detail.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon="mdi:chevron-left"></iconify-icon></span>
+          </button>
+          <button type="button" class="trend-control trend-next" data-trend-next aria-label="Next trend">
+            <span class={`icon-mini ${iconTokens.detail.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon="mdi:chevron-right"></iconify-icon></span>
+          </button>
+          <div class="trend-dots" role="tablist" aria-label="Trend slides">
+            {trends.items.map((item, index) => (
+              <button
+                type="button"
+                class={`trend-dot ${index === 0 ? "is-active" : ""}`}
+                data-trend-dot
+                data-index={index}
+                aria-label={`View trend: ${item.title}`}
+              ></button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id={skills.id} class="section" data-reveal>
+        <h2 class="section-title flex items-center gap-3">
+          <span class={`icon-chip ${iconTokens.skills.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.skills.name}></iconify-icon></span>
+          {skills.title}
+        </h2>
+        <p class="section-copy">{skills.description}</p>
+        <div class="mt-8 grid gap-4 md:grid-cols-3">
+          {skills.groups.map((group, index) => {
+            const groupToken = groupIconFor(group.name);
+            return (
+              <article class="card" data-reveal style={`--delay:${index * 80}ms`}>
+                <h3 class="flex items-center gap-2 text-xl font-semibold text-slate-900">
+                  <span class={`icon-mini icon-skill-group ${groupToken.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={groupToken.name}></iconify-icon></span>
+                  {group.name}
+                </h3>
+                <ul class="mt-4 space-y-2 text-base text-slate-700">
+                  {group.items.map((item) => {
+                    const skillToken = skillIconFor(item);
+                    return (
+                      <li class="skill-item flex items-center gap-2">
+                        <span class={`icon-mini icon-skill ${skillToken.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={skillToken.name}></iconify-icon></span>
+                        {item}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id={projects.id} class="section" data-reveal>
+        <h2 class="section-title flex items-center gap-3">
+          <span class={`icon-chip ${iconTokens.projects.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.projects.name}></iconify-icon></span>
+          {projects.title}
+        </h2>
+        <p class="section-copy">{projects.description}</p>
+        <div class="mt-8 grid gap-4 md:grid-cols-3">
+          {projects.items.map((project, index) => {
+            const token = projectIconFor(project.slug);
+            return (
+              <article class="card" data-reveal style={`--delay:${index * 90}ms`}>
+                <h3 class="flex items-center gap-2 text-lg font-semibold text-slate-900">
+                  <span class={`icon-mini ${token.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={token.name}></iconify-icon></span>
+                  {project.title}
+                </h3>
+                <p class="mt-2 text-sm text-slate-600">{project.summary}</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  {project.tags.map((tag) => {
+                    const tagToken = skillIconFor(tag);
+                    return (
+                      <span class="badge">
+                        <span class={`icon-mini ${tagToken.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={tagToken.name}></iconify-icon></span>
+                        {tag}
+                      </span>
+                    );
+                  })}
+                </div>
+                <a href={toHash(projectId(project.slug))} class="group mt-5 inline-flex items-center gap-1 text-sm font-semibold text-slate-900 underline decoration-slate-300 underline-offset-4 hover:decoration-slate-900">
+                  <span class={`icon-mini ${iconTokens.detail.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.detail.name}></iconify-icon></span>
+                  View Details
+                </a>
+              </article>
+            );
+          })}
+        </div>
+
+        <div class="mt-10 space-y-4">
+          {projects.items.map((project, index) => {
+            const token = projectIconFor(project.slug);
+            return (
+              <article id={projectId(project.slug)} class="card scroll-mt-28" data-reveal style={`--delay:${index * 100}ms`}>
+                <h3 class="flex items-center gap-2 text-xl font-semibold text-slate-900">
+                  <span class={`icon-chip ${token.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={token.name}></iconify-icon></span>
+                  {project.title}
+                </h3>
+                <p class="mt-3 text-slate-700">{project.details}</p>
+                <div class="mt-4 flex flex-wrap gap-3 text-sm">
+                  <a href={project.links.demo} class="button-secondary inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 font-semibold text-slate-900 transition hover:bg-slate-100">
+                    <span class={`icon-mini ${iconTokens.link.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.link.name}></iconify-icon></span>
+                    Live Demo
+                  </a>
+                  <a href={project.links.github} target={isExternal(project.links.github) ? "_blank" : undefined} rel={isExternal(project.links.github) ? "noreferrer" : undefined} class="button-secondary inline-flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 font-semibold text-slate-900 transition hover:bg-slate-100">
+                    <span class={`icon-mini ${iconTokens.link.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.link.name}></iconify-icon></span>
+                    GitHub
+                  </a>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section id={contact.id} class="section" data-reveal>
+        <h2 class="section-title flex items-center gap-3">
+          <span class={`icon-chip ${iconTokens.contact.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.contact.name}></iconify-icon></span>
+          {contact.title}
+        </h2>
+        <p class="section-copy">{contact.description}</p>
+
+        <div class="mt-8 grid gap-4 md:grid-cols-2">
+          <article class="card" data-reveal>
+            <h3 class="text-lg font-semibold text-slate-900">Direct Contact</h3>
+            <p class="mt-3 flex items-center gap-2 text-sm text-slate-700">
+              <span class={`icon-mini ${iconTokens.contact.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.contact.name}></iconify-icon></span>
+              {contact.email}
+            </p>
+            <p class="mt-1 flex items-center gap-2 text-sm text-slate-600">
+              <span class={`icon-mini ${iconTokens.location.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.location.name}></iconify-icon></span>
+              {contact.location}
+            </p>
+            <ul class="mt-4 space-y-2 text-sm">
+              {contact.socials.map((social) => {
+                const token = socialIconFor(social.label);
+                return (
+                  <li>
+                    <a href={social.url} target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 font-semibold text-slate-900 underline decoration-slate-300 underline-offset-4 hover:decoration-slate-900">
+                      <span class={`icon-mini ${token.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={token.name}></iconify-icon></span>
+                      {social.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </article>
+
+          <article class="card" data-reveal style="--delay:120ms">
+            {formEnabled ? (
+              <form action={formEndpoint} method="POST" class="space-y-4">
+                <label class="block text-sm font-semibold text-slate-800">
+                  {contact.form.nameLabel}
+                  <input name="name" type="text" required placeholder={contact.form.namePlaceholder} class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                </label>
+                <label class="block text-sm font-semibold text-slate-800">
+                  {contact.form.emailLabel}
+                  <input name="email" type="email" required placeholder={contact.form.emailPlaceholder} class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+                </label>
+                <label class="block text-sm font-semibold text-slate-800">
+                  {contact.form.messageLabel}
+                  <textarea name="message" required rows="5" placeholder={contact.form.messagePlaceholder} class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"></textarea>
+                </label>
+                <button type="submit" class="button-primary inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+                  <span class={`icon-mini ${iconTokens.send.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.send.name}></iconify-icon></span>
+                  {contact.form.submitLabel}
+                </button>
+              </form>
+            ) : (
+              <div>
+                <p class="text-sm text-slate-700">{contact.form.fallbackNote}</p>
+                <a href={`mailto:${contact.email}`} class="button-secondary mt-4 inline-flex items-center gap-2 rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
+                  <span class={`icon-mini ${iconTokens.contact.color}`} aria-hidden="true"><iconify-icon class="rich-icon" icon={iconTokens.contact.name}></iconify-icon></span>
+                  Email {site.name}
+                </a>
+              </div>
+            )}
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-slate-200">
+      <div class="section py-8 text-sm text-slate-600">{footer.text}</div>
+    </footer>
+
+    <script>
+      const animatedElements = document.querySelectorAll("[data-reveal]");
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.15 }
+      );
+      animatedElements.forEach((element) => revealObserver.observe(element));
+
+      const roundRobinAnimations = ["icon-anim-1", "icon-anim-2", "icon-anim-3", "icon-anim-4", "icon-anim-5"];
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let animationCursor = 0;
+      if (!prefersReducedMotion) {
+        const hoverIcons = document.querySelectorAll(".icon-mini, .icon-chip");
+        hoverIcons.forEach((icon) => {
+          if (icon.classList.contains("icon-skill-group")) return;
+          if (icon.closest(".theme-toggle")) return;
+          icon.addEventListener("mouseenter", () => {
+            roundRobinAnimations.forEach((name) => icon.classList.remove(name));
+            const nextAnimation = roundRobinAnimations[animationCursor];
+            animationCursor = (animationCursor + 1) % roundRobinAnimations.length;
+            void icon.offsetWidth;
+            icon.classList.add(nextAnimation);
+          });
+          icon.addEventListener("animationend", () => {
+            roundRobinAnimations.forEach((name) => icon.classList.remove(name));
+          });
+        });
+      }
+
+      const trendCarousel = document.querySelector("[data-trend-carousel]");
+      if (trendCarousel) {
+        const slides = Array.from(trendCarousel.querySelectorAll("[data-trend-slide]"));
+        const dots = Array.from(trendCarousel.querySelectorAll("[data-trend-dot]"));
+        const prevButton = trendCarousel.querySelector("[data-trend-prev]");
+        const nextButton = trendCarousel.querySelector("[data-trend-next]");
+        let currentIndex = 0;
+        let timerId = null;
+
+        const setSlide = (nextIndex) => {
+          currentIndex = (nextIndex + slides.length) % slides.length;
+          slides.forEach((slide, index) => {
+            slide.classList.toggle("is-active", index === currentIndex);
+          });
+          dots.forEach((dot, index) => {
+            const isActive = index === currentIndex;
+            dot.classList.toggle("is-active", isActive);
+            dot.setAttribute("aria-current", String(isActive));
+          });
+        };
+
+        const stopAutoPlay = () => {
+          if (!timerId) return;
+          clearInterval(timerId);
+          timerId = null;
+        };
+
+        const startAutoPlay = () => {
+          stopAutoPlay();
+          timerId = setInterval(() => setSlide(currentIndex + 1), 7000);
+        };
+
+        prevButton?.addEventListener("click", () => {
+          setSlide(currentIndex - 1);
+          startAutoPlay();
+        });
+
+        nextButton?.addEventListener("click", () => {
+          setSlide(currentIndex + 1);
+          startAutoPlay();
+        });
+
+        dots.forEach((dot, index) => {
+          dot.addEventListener("click", () => {
+            setSlide(index);
+            startAutoPlay();
+          });
+        });
+
+        trendCarousel.addEventListener("mouseenter", stopAutoPlay);
+        trendCarousel.addEventListener("mouseleave", startAutoPlay);
+        trendCarousel.addEventListener("focusin", stopAutoPlay);
+        trendCarousel.addEventListener("focusout", startAutoPlay);
+        startAutoPlay();
+      }
+
+      const root = document.documentElement;
+      const themeToggle = document.querySelector("[data-theme-toggle]");
+      const applyTheme = (theme) => {
+        root.dataset.theme = theme;
+        localStorage.setItem("theme", theme);
+        if (!themeToggle) return;
+        themeToggle.setAttribute("aria-label", theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
+        themeToggle.setAttribute("aria-checked", String(theme === "dark"));
+      };
+      applyTheme(root.dataset.theme || "light");
+      themeToggle?.addEventListener("click", () => {
+        const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
+        applyTheme(nextTheme);
+      });
+    </script>
+  </body>
+</html>

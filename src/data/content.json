@@ -1,0 +1,326 @@
+{
+  "site": {
+    "name": "Chelsi Shulamite",
+    "title": "Chelsi Shulamite | AI Engineer Portfolio",
+    "description": "Portfolio of Chelsi Shulamite, focused on agentic AI, machine learning, and research-driven software engineering.",
+    "tagline": "AI Engineer | Agentic Systems | ML Research"
+  },
+  "nav": [
+    {
+      "label": "Hero",
+      "target": "hero"
+    },
+    {
+      "label": "Highlights",
+      "target": "highlights"
+    },
+    {
+      "label": "Trends",
+      "target": "trends"
+    },
+    {
+      "label": "Skills",
+      "target": "skills"
+    },
+    {
+      "label": "Projects",
+      "target": "projects"
+    },
+    {
+      "label": "Contact",
+      "target": "contact"
+    }
+  ],
+  "hero": {
+    "id": "hero",
+    "kicker": "Open to AI Engineering Roles",
+    "headline": "Building practical AI systems that are reliable, scalable, and useful.",
+    "description": "I design and ship AI solutions across agentic workflows, LLM orchestration, and applied machine learning. I focus on clarity, performance, and real product value.",
+    "primaryCta": {
+      "label": "View Projects",
+      "target": "projects"
+    },
+    "secondaryCta": {
+      "label": "Contact Me",
+      "target": "contact"
+    }
+  },
+  "highlights": {
+    "id": "highlights",
+    "title": "Highlights",
+    "description": "Key achievements, publications, and milestones across research and engineering work.",
+    "items": [
+      {
+        "title": "Paper Publication",
+        "tag": "Research",
+        "detail": "Published \"Enhancing Hate Speech Detection: Evaluation of Classification Models and Techniques\" on ResearchGate."
+      },
+      {
+        "title": "Applied AI Delivery",
+        "tag": "Engineering",
+        "detail": "Built end-to-end AI systems across NLP, computer vision, and agentic workflows with practical deployment focus."
+      },
+      {
+        "title": "Academic Progress",
+        "tag": "Education",
+        "detail": "Master's student in Applied Data Intelligence with focus on LLM orchestration and scalable ML systems."
+      },
+      {
+        "title": "Cross-Disciplinary Interests",
+        "tag": "Personal",
+        "detail": "Pursue singing, dancing, and painting while continuing advanced technical learning."
+      }
+    ]
+  },
+  "trends": {
+    "id": "trends",
+    "title": "Latest AI and Software Trends",
+    "description": "A curated snapshot of current developments shaping AI-first software in 2026.",
+    "items": [
+      {
+        "title": "NVIDIA GTC 2026 pushes NeMo-centered AI infrastructure",
+        "source": "NVIDIA Newsroom",
+        "date": "March 2026",
+        "summary": "GTC 2026 emphasizes enterprise AI factories, accelerated computing, and NeMo-based agent systems as core software infrastructure.",
+        "image": "https://iprsoftwaremedia.com/219/files/202603/69a652983d63328af70413ad_GTC-2026-press-release/GTC-2026-press-release_0aa19572-a135-4f89-ba4c-7b506538d815-prv.jpg",
+        "url": "https://nvidianews.nvidia.com/news/nvidia-ceo-jensen-huang-and-global-technology-leaders-to-showcase-age-of-ai-at-gtc-2026"
+      },
+      {
+        "title": "AutoResearch highlights autonomous model-improvement loops",
+        "source": "Andrej Karpathy / GitHub",
+        "date": "March 2026",
+        "summary": "AutoResearch demonstrates practical autonomous experimentation pipelines where agents iterate on model code and keep only better runs.",
+        "image": "https://raw.githubusercontent.com/karpathy/autoresearch/master/progress.png",
+        "url": "https://github.com/karpathy/autoresearch"
+      },
+      {
+        "title": "Gemini moves deeper into software workflows",
+        "source": "Google Blog",
+        "date": "March 2026",
+        "summary": "Google's latest Gemini Workspace updates show AI capabilities becoming native workflow layers rather than standalone chat utilities.",
+        "image": "https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Social_Share_-_keyword.width-1300.png",
+        "url": "https://blog.google/products-and-platforms/products/workspace/gemini-workspace-updates-march-2026/"
+      },
+      {
+        "title": "Copilot platform shifts toward stronger agent controls",
+        "source": "GitHub Changelog",
+        "date": "March 2026",
+        "summary": "Recent GitHub changelog updates show rapid iterations on Copilot model strategy, coding-agent controls, and enterprise usage visibility.",
+        "image": "https://github.blog/wp-content/uploads/2026/03/567939803-059125a9-f1f9-4ed8-a3b8-1a02f30ea1fb.jpg",
+        "url": "https://github.blog/changelog/month/03-2026/"
+      },
+      {
+        "title": "Economic usage telemetry becomes an AI product signal",
+        "source": "Anthropic",
+        "date": "January 15, 2026",
+        "summary": "The Anthropic Economic Index frames real-world AI usage patterns as a strategic input for product planning and model deployment decisions.",
+        "image": "https://www.anthropic.com/api/opengraph-illustration?name=Hand%20NodeGraph&backgroundColor=heather",
+        "url": "https://www.anthropic.com/news/the-anthropic-economic-index"
+      }
+    ],
+    "meta": {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "modelLockedAt": "2026-03-25T02:55:06.050Z",
+      "pricing": {
+        "prompt": "$0.071/M",
+        "completion": "$0.100/M"
+      },
+      "lastModelRefreshMode": "full_refresh",
+      "signals": {
+        "openrouter": [],
+        "huggingFace": [
+          "hauhaucs/qwen3.5-35b-a3b-uncensored-hauhaucs-aggressive",
+          "jackrong/qwen3.5-27b-claude-4.6-opus-reasoning-distilled",
+          "baidu/qianfan-ocr",
+          "nvidia/nemotron-cascade-2-30b-a3b",
+          "royalcities/foundation-1"
+        ],
+        "arena": [
+          "duration-100",
+          "bottom-0",
+          "flex-shrink-0",
+          "opacity-0",
+          "ring-offset-2"
+        ]
+      }
+    }
+  },
+  "skills": {
+    "id": "skills",
+    "title": "Skills",
+    "description": "A focused toolkit for building and deploying modern AI applications.",
+    "groups": [
+      {
+        "name": "AI and ML",
+        "items": [
+          "PyTorch",
+          "Scikit-learn",
+          "NLP",
+          "Model Evaluation",
+          "Feature Engineering"
+        ]
+      },
+      {
+        "name": "Agentic Systems",
+        "items": [
+          "LangChain",
+          "Workflow Design",
+          "Prompt Engineering",
+          "RAG Patterns"
+        ]
+      },
+      {
+        "name": "Software and Data",
+        "items": [
+          "Python",
+          "TypeScript",
+          "APIs",
+          "SQL",
+          "Docker"
+        ]
+      },
+      {
+        "name": "Cloud and Platform Engineering",
+        "items": [
+          "AWS",
+          "Azure",
+          "Cloud Deployment",
+          "Infrastructure Basics",
+          "Monitoring"
+        ]
+      },
+      {
+        "name": "Data Engineering",
+        "items": [
+          "ETL Pipelines",
+          "Data Modeling",
+          "Data Quality",
+          "Batch Processing",
+          "Workflow Orchestration"
+        ]
+      },
+      {
+        "name": "LLMs and GenAI",
+        "items": [
+          "Prompt Engineering",
+          "LLM Evaluation",
+          "RAG",
+          "Agent Design",
+          "Safety and Guardrails"
+        ]
+      },
+      {
+        "name": "Databases and Streaming",
+        "items": [
+          "PostgreSQL",
+          "MySQL",
+          "Vector Databases",
+          "Kafka",
+          "Event-Driven Design"
+        ]
+      },
+      {
+        "name": "Mathematical Foundations",
+        "items": [
+          "Linear Algebra",
+          "Probability",
+          "Statistics",
+          "Optimization",
+          "Hypothesis Testing"
+        ]
+      },
+      {
+        "name": "Creative and Collaborative Skills",
+        "items": [
+          "Singing",
+          "Dancing",
+          "Painting",
+          "Communication",
+          "Storytelling"
+        ]
+      }
+    ]
+  },
+  "projects": {
+    "id": "projects",
+    "title": "Projects",
+    "description": "Selected work with measurable outcomes and clear technical ownership.",
+    "items": [
+      {
+        "slug": "kayak-simulation",
+        "title": "Kayak Simulation Agent",
+        "summary": "Autonomous travel-booking simulation with decision routing and orchestration.",
+        "details": "Designed an end-to-end workflow for request handling, tool selection, and response validation. The system improved consistency and reduced manual handling for repetitive operations.",
+        "tags": [
+          "LangChain",
+          "Orchestration",
+          "Microservices"
+        ],
+        "links": {
+          "demo": "#",
+          "github": "https://github.com/chelsi-shulamite"
+        }
+      },
+      {
+        "slug": "trauma-detection",
+        "title": "Abdominal Trauma Detection",
+        "summary": "Multi-modal deep learning pipeline for organ-level trauma classification.",
+        "details": "Built a classification pipeline combining image and metadata signals. Benchmarked model quality, improved inference flow, and prepared outputs for practical review and decision support.",
+        "tags": [
+          "PyTorch",
+          "Computer Vision",
+          "ONNX"
+        ],
+        "links": {
+          "demo": "#",
+          "github": "https://github.com/chelsi-shulamite"
+        }
+      },
+      {
+        "slug": "hate-speech-detection",
+        "title": "Hate Speech Detection Research",
+        "summary": "Text classification research with model comparison and publication output.",
+        "details": "Evaluated multiple models for toxic text detection and built a repeatable NLP preprocessing flow. Documented results with accuracy and F1 score to support transparent model selection. This work was formally published on ResearchGate.",
+        "tags": [
+          "NLP",
+          "Flask",
+          "Random Forest"
+        ],
+        "links": {
+          "demo": "https://www.researchgate.net/",
+          "github": "https://github.com/chelsi-shulamite"
+        }
+      }
+    ]
+  },
+  "contact": {
+    "id": "contact",
+    "title": "Contact",
+    "description": "If you want to collaborate, discuss a role, or review ideas together, send me a message.",
+    "email": "chelsielthuri@gmail.com",
+    "location": "San Jose, California",
+    "socials": [
+      {
+        "label": "LinkedIn",
+        "url": "https://linkedin.com/in/chelsi-shulamite512"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/chelsi-shulamite"
+      }
+    ],
+    "form": {
+      "nameLabel": "Name",
+      "namePlaceholder": "Your name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Tell me how we can work together.",
+      "submitLabel": "Send Message",
+      "fallbackNote": "Form is not configured yet. Please use email directly."
+    }
+  },
+  "footer": {
+    "text": "© 2026 Chelsi Shulamite"
+  }
+}
